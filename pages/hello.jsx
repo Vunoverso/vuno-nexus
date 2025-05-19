@@ -1,0 +1,1 @@
+export default function Hello() { return <h1>Olá!</h1>; }

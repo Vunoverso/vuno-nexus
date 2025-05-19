@@ -1,0 +1,36 @@
+{
+  "project": "vuno-core-os",
+  "phase": 3,
+  "tasks": [
+    {
+      "order": 1,
+      "description": "Definir schema e tabela de histórico de prompts/respostas no Supabase",
+      "file": "prisma/schema.prisma"
+    },
+    {
+      "order": 2,
+      "description": "Gerar cliente Prisma e rodar migration para criar a tabela de histórico",
+      "command": "npx prisma migrate dev --name init_ia_history"
+    },
+    {
+      "order": 3,
+      "description": "Implementar persistência de prompt/resposta em core/useFusion.ts",
+      "file": "core/useFusion.ts"
+    },
+    {
+      "order": 4,
+      "description": "Criar endpoint GET /api/fusion/history para recuperar histórico do usuário",
+      "file": "pages/api/fusion/history.ts"
+    },
+    {
+      "order": 5,
+      "description": "Atualizar UI em pages/ia/console.tsx para exibir lista de histórico de interações",
+      "file": "pages/ia/console.tsx"
+    },
+    {
+      "order": 6,
+      "description": "Adicionar botão para alternar entre modo Raw (JSON cru) e Formatado na UI do Console de IA",
+      "file": "pages/ia/console.tsx"
+    }
+  ]
+}

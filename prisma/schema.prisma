@@ -1,0 +1,21 @@
+// prisma/schema.prisma
+
+// 1) Conexão com o banco do Supabase
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2) Gerador do client Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PromptHistory {
+  id        String   @id @default(cuid())
+  prompt    String
+  response  String
+  userId    String
+  project   String   @default("default")
+  createdAt DateTime @default(now())
+}
