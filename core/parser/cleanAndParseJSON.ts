@@ -1,41 +1,50 @@
-// core/parser/cleanAndParseJSON.ts
-// Parser tolerante para extrair múltiplos objetos JSON de texto livre
-export function cleanAndParseJSON(text: string): Array<{ path: string; content: string }> {
-  // Remove apenas as linhas de delimitadores de bloco Markdown (``` ou ```json)
-  const cleaned = text.replace(/^```.*$/gm, '').trim()
-  const files: Array<{ path: string; content: string }> = []
+/**
+ * Extrai múltiplos objetos JSON de um texto livre,
+ * remove blocos Markdown e retorna um array de FileItem.
+ */
+import { FileItem } from '@/core/types'
 
-  // Função que faz parsing 'stack-based' para capturar JSONs independentes
-  function extractJSONChunks(input: string): string[] {
-    const chunks: string[] = []
-    let depth = 0
-    let startIndex = -1
-    for (let i = 0; i < input.length; i++) {
-      const ch = input[i]
-      if (ch === '{') {
-        if (depth === 0) startIndex = i
-        depth++;
-      } else if (ch === '}') {
-        depth--;
-        if (depth === 0 && startIndex !== -1) {
-          chunks.push(input.slice(startIndex, i + 1))
-          startIndex = -1
-        }
-      }
-    }
-    return chunks
+const JSON_BLOCK_REGEX = /```json([\s\S]*?)```/g
+const GENERIC_JSON_REGEX = /\{[\s\S]*?\}/g
+
+export function cleanAndParseJSON(raw: string): FileItem[] {
+  const text = raw
+    // remover blocos de markdown
+    .replace(/```[\s\S]*?```/g, '')
+    // remover backticks restantes
+    .replace(/```/g, '')
+
+  let matches: RegExpMatchArray | null
+  const jsonStrings = [] as string[]
+
+  // 1) Capturar blocos multiline JSON
+  while ((matches = JSON_BLOCK_REGEX.exec(raw))) {
+    jsonStrings.push(matches[1].trim())
   }
 
-  // Extrai e parseia cada chunk
-  const rawChunks = extractJSONChunks(cleaned)
-  for (const chunk of rawChunks) {
+  // 2) Se não houver blocos, extrair qualquer {...}
+  if (jsonStrings.length === 0) {
+    const generic = text.match(GENERIC_JSON_REGEX)
+    if (generic) jsonStrings.push(...generic)
+  }
+
+  const files: FileItem[] = []
+  for (const str of jsonStrings) {
     try {
-      const obj = JSON.parse(chunk)
-      if (obj && typeof obj === 'object' && 'path' in obj && 'content' in obj) {
-        files.push({ path: String((obj as any).path), content: String((obj as any).content) })
+      const arr = JSON.parse(str) as any[]
+      // caso retorne um único objeto ou array genérico
+      const items = Array.isArray(arr) ? arr : [arr]
+      for (const item of items) {
+        if (item.path && item.content) {
+          files.push({
+            path: String(item.path).trim(),
+            content: String(item.content)
+          })
+        }
       }
     } catch {
-      // Ignora JSONs inválidos
+      // ignorar JSON inválido
+      continue
     }
   }
 

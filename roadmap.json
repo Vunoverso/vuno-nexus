@@ -1,0 +1,274 @@
+{
+  "roadmap": {
+    "fases": [
+      {
+        "id": 0,
+        "nome": "Gênese Estrutural",
+        "descricao": "Estruturar diretórios, arquivos essenciais e preparar a arquitetura para execução inteligente.",
+        "etapas": [
+          {
+            "id": 1,
+            "titulo": "Criação da Estrutura Básica",
+            "arquivo": [
+              "pages/",
+              "components/",
+              "api/",
+              "core/",
+              "utils/",
+              "data/projetos/{nome}"
+            ]
+          },
+          {
+            "id": 2,
+            "titulo": "Configurações Iniciais",
+            "configs": [
+              "tailwind.config.js",
+              ".env.local",
+              "package.json",
+              "fusion.config.js"
+            ]
+          },
+          {
+            "id": 3,
+            "titulo": "Módulos Base",
+            "arquivos": [
+              "execute.ts",
+              "estrutura.json",
+              "context.json",
+              "tokens.json",
+              "memoria.json"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "nome": "Execução e Validação com IA",
+        "etapas": [
+          {
+            "id": 4,
+            "titulo": "intelligentParser",
+            "descrição": "Detecta tipo de entrada e normaliza."
+          },
+          {
+            "id": 5,
+            "titulo": "fixWithAI",
+            "descrição": "Corrige instruções malformadas."
+          },
+          {
+            "id": 6,
+            "titulo": "generateImpactReport",
+            "descrição": "Mostra impacto das mudanças antes de aplicar."
+          },
+          {
+            "id": 7,
+            "titulo": "applyChanges",
+            "descrição": "Aplica alterações com backup automático."
+          },
+          {
+            "id": 8,
+            "titulo": "rollbackManager",
+            "descrição": "Desfaz últimas ações em caso de erro."
+          },
+          {
+            "id": 9,
+            "titulo": "autoTrigger",
+            "descrição": "Gera APIs/rotas extras conforme necessidade."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "nome": "Planejamento Estratégico por IA",
+        "etapas": [
+          {
+            "id": 10,
+            "titulo": "suggestExplanation",
+            "descrição": "IA explica ações tomadas."
+          },
+          {
+            "id": 11,
+            "titulo": "log-history",
+            "descrição": "Registra input, emoção e impacto das execuções."
+          },
+          {
+            "id": 12,
+            "titulo": "EtapasFlow",
+            "descrição": "UI que mostra histórico de execução em tempo real."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "nome": "Visual, Preview e Simulação",
+        "etapas": [
+          {
+            "id": 13,
+            "titulo": "FilePreviewModal",
+            "descrição": "Modal para diff entre versões."
+          },
+          {
+            "id": 14,
+            "titulo": "HelpTooltip",
+            "descrição": "Tooltips com explicações da IA."
+          },
+          {
+            "id": 15,
+            "titulo": "simulationDelay",
+            "descrição": "Execução passo-a-passo simulada."
+          },
+          {
+            "id": 16,
+            "titulo": "FusionGraph",
+            "descrição": "Grafo visual da estrutura projetual."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "nome": "Refatoração e Diagnóstico Inteligente",
+        "etapas": [
+          {
+            "id": 17,
+            "titulo": "auto-refactor-cluster",
+            "descrição": "Detecta padrões e propõe melhorias automáticas."
+          },
+          {
+            "id": 18,
+            "titulo": "diagnostico",
+            "descrição": "Análise geral de saúde do projeto."
+          },
+          {
+            "id": 19,
+            "titulo": "DiagnosticoMental",
+            "descrição": "Interface de diagnóstico técnico e emocional."
+          },
+          {
+            "id": 20,
+            "titulo": "generateFeedbackEmocional",
+            "descrição": "IA gera feedback emocional ao usuário."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "nome": "Deploy, Exportação e Backup",
+        "etapas": [
+          {
+            "id": 21,
+            "titulo": "deployToVercel",
+            "descrição": "Deploy automático via token Vercel."
+          },
+          {
+            "id": 22,
+            "titulo": "api/projects/backup",
+            "descrição": "Backup de arquivos e memória do projeto."
+          },
+          {
+            "id": 23,
+            "titulo": "cli-executor",
+            "descrição": "Execução offline pelo terminal."
+          },
+          {
+            "id": 24,
+            "titulo": "generateExport",
+            "descrição": "Geração de .zip completo do projeto."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "nome": "Builder Visual e Legado",
+        "etapas": [
+          {
+            "id": 25,
+            "titulo": "nlp-to-json",
+            "descrição": "Converte texto natural em JSON de arquivos."
+          },
+          {
+            "id": 26,
+            "titulo": "importLegacyToNexus",
+            "descrição": "Importa código existente para o Builder."
+          },
+          {
+            "id": 27,
+            "titulo": "generateTestFromCode",
+            "descrição": "Gera testes Jest/Vitest automaticamente."
+          },
+          {
+            "id": 28,
+            "titulo": "VisualBuilder",
+            "descrição": "Editor drag & drop com IA."
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "nome": "Evolução e Autonomia",
+        "etapas": [
+          {
+            "id": 29,
+            "titulo": "NexusEvolution",
+            "descrição": "Motor de autoaprendizado do Builder."
+          },
+          {
+            "id": 30,
+            "titulo": "NexusMemory",
+            "descrição": "Memória cognitiva para contexto de projeto."
+          },
+          {
+            "id": 31,
+            "titulo": "patternScanner",
+            "descrição": "Identifica padrões e oportunidades de template."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "nome": "Multiagente Cooperativo e Autorregulação",
+        "etapas": [
+          {
+            "id": 32,
+            "titulo": "AgentOrchestrator",
+            "descrição": "Orquestra agentes IA especializados."
+          },
+          {
+            "id": 33,
+            "titulo": "ExecutorAgent",
+            "descrição": "Executa comandos de geração."
+          },
+          {
+            "id": 34,
+            "titulo": "RefactorAgent",
+            "descrição": "Sugere e aplica refatorações."
+          },
+          {
+            "id": 35,
+            "titulo": "InsightAgent",
+            "descrição": "Fornece insights e sugestões em tempo real."
+          },
+          {
+            "id": 36,
+            "titulo": "SecurityAgent",
+            "descrição": "Valida aspectos de segurança antes de gravar."
+          },
+          {
+            "id": 37,
+            "titulo": "TestAgent",
+            "descrição": "Gera e executa baterias de teste automáticas."
+          },
+          {
+            "id": 38,
+            "titulo": "AccessibilityAgent",
+            "descrição": "Valida boas práticas de acessibilidade."
+          },
+          {
+            "id": 39,
+            "titulo": "UXPatternAgent",
+            "descrição": "Ajusta fluxos de UX e usabilidade."
+          }
+        ]
+      }
+    ]
+  }
+}

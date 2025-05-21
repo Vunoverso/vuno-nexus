@@ -1,21 +1,156 @@
 // prisma/schema.prisma
 
-// 1) Conexão com o banco do Supabase
+// Conexão com banco de dados (Supabase PostgreSQL)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// 2) Gerador do client Prisma
+// Gerador do Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
+// --- Usuários e Autenticação ---
+model User {
+  id             String      @id @default(uuid())
+  nome           String?
+  email          String      @unique
+  password       String      // senha hash
+  createdAt      DateTime    @default(now())
+
+  // Relações
+  projetos       Projeto[]
+  execucoes      Execucao[]
+  logExecucao    LogExecucao[]
+  promptHistory  PromptHistory[]
+}
+
+// --- Logs e Execuções ---
+model LogExecucao {
+  id         String   @id @default(cuid())
+  prompt     String
+  result     String
+  status     String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  project    String
+  createdAt  DateTime @default(now())
+}
+
 model PromptHistory {
-  id        String   @id @default(cuid())
-  prompt    String
-  response  String
-  userId    String
-  project   String   @default("default")
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  prompt     String
+  response   String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  project    String
+  createdAt  DateTime @default(now())
+}
+
+model Execucao {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  projeto      String
+  linguagem    String
+  path         String
+  entrada      String
+  saida        String
+  status       String   // "success" | "error"
+  criadoEm     DateTime @default(now())
+}
+
+// --- Sistema Central do VUNO NEXUS OS ---
+model Projeto {
+  id           String           @id @default(uuid())
+  nome         String
+  objetivo     String
+  complexidade String           // "iniciante" | "medio" | "enterprise"
+  tipo         String           // "dashboard" | "api" | "mobile" etc.
+  origem       String           // "novo" | "fork" | "migracao" | "continuacao"
+  status       String           @default("ativo")
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relacionamento com usuário proprietário
+  user         User             @relation(fields: [userId], references: [id])
+  userId       String
+
+  arquivos     Arquivo[]
+  checklists   Checklist[]
+  roadmaps     Roadmap[]
+  observacoes  Observacao[]
+  eventos      ExecEvent[]
+  prints       PrintAnalisado[]
+  cognitivo    CognitionLog[]
+}
+
+model Arquivo {
+  id         String      @id @default(uuid())
+  projeto    Projeto     @relation(fields: [projetoId], references: [id])
+  projetoId  String
+  path       String      // e.g., '/components/Header.tsx'
+  content    String?
+  version    Int         @default(1)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  eventos    ExecEvent[]
+}
+
+model Checklist {
+  id         String   @id @default(uuid())
+  projeto    Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId  String
+  descricao  String
+  status     String   @default("pendente")
+  timestamp  DateTime @default(now())
+}
+
+model Roadmap {
+  id        String   @id @default(uuid())
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId String
+  titulo    String
+  meta      String
+  ordem     Int
+}
+
+model Observacao {
+  id        String   @id @default(uuid())
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId String
+  texto     String
+  criadoEm  DateTime @default(now())
+}
+
+model ExecEvent {
+  id        String      @id @default(uuid())
+  projeto   Projeto     @relation(fields: [projetoId], references: [id])
+  projetoId String
+  arquivo   Arquivo?    @relation(fields: [arquivoId], references: [id])
+  arquivoId String?
+  tipo      String      // "apply" | "optimize" | "rollback" | "insight"
+  resultado Json
+  timestamp DateTime    @default(now())
+}
+
+model PrintAnalisado {
+  id        String   @id @default(uuid())
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId String
+  imagemUrl String
+  resultado Json
+  criadoEm  DateTime @default(now())
+}
+
+model CognitionLog {
+  id        String   @id @default(uuid())
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId String
+  motivo    String
+  acao      String
+  resultado String
+  iaVersao  String
+  criadoEm  DateTime @default(now())
 }

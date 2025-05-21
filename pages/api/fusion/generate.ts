@@ -1,72 +1,81 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import OpenAI from "openai"
-import { prisma } from "@/lib/prisma" // ajuste o caminho se necessário
+import { prisma } from "@/lib/prisma"
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || "",
+})
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" })
   }
 
-  const { prompt, userId, project } = req.body as {
+  const { prompt, userId = "anon-user", project = "default" } = req.body as {
     prompt?: string
     userId?: string
     project?: string
   }
 
-  if (!prompt || prompt.length < 3) {
-    return res.status(400).json({ error: "Prompt ausente ou inválido" })
+  if (!prompt || prompt.trim().length < 3) {
+    return res.status(400).json({ error: "Prompt ausente ou muito curto" })
   }
 
   try {
     const systemPrompt = `
-Você é um gerador de arquivos para um sistema de programação. Sua tarefa é transformar uma instrução em linguagem natural em um JSON contendo:
+Você é um gerador de arquivos para um sistema de programação. Sua tarefa é transformar uma instrução em linguagem natural em um ARRAY JSON contendo múltiplos arquivos:
 
-{
-  "path": "caminho/do/arquivo.extensão",
-  "content": "conteúdo do arquivo completo"
-}
+[
+  { "path": "pasta/arquivo.ext", "content": "conteúdo do arquivo" },
+  { "path": "pasta/segundo.ext", "content": "conteúdo do segundo arquivo" }
+]
 
-Regras:
-- O content pode ser escrito em qualquer linguagem (.js, .ts, .jsx, .tsx, .json, .py, .sql, .html, .md, .prisma, etc.).
-- O campo "path" deve sempre indicar a pasta correta e ter a extensão correta.
-- NÃO use blocos de markdown (ex: \`\`\` ou \`\`\`json).
-- NÃO inclua explicações ou comentários fora do JSON.
-- Retorne apenas o objeto JSON puro.
-
-Exemplo:
-Prompt: Crie um schema Prisma com model User em prisma/schema.prisma
-Resposta:
-{
-  "path": "prisma/schema.prisma",
-  "content": "model User {\\n  id Int @id @default(autoincrement())\\n  name String\\n}"
-}
+⚠️ Regras:
+- NÃO use blocos markdown (nada de \`\`\` ou \`\`\`json).
+- NÃO explique nada fora dos objetos JSON.
+- Os arquivos devem ser completos e compiláveis.
+- Use extensões como .js, .ts, .tsx, .json, .html, .md, .prisma, .sql, etc.
 `.trim()
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
+      temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
-      ],
-      temperature: 0.3,
+      ]
     })
 
-    const raw = completion.choices[0].message?.content || ""
+    const result = completion.choices?.[0]?.message?.content || ""
 
+    // Registro no histórico geral
     await prisma.promptHistory.create({
       data: {
         prompt,
-        response: raw,
-        userId: userId || "anon-user",
-        project: project || "default"
-      }
+        response: result,
+        userId,
+        project,
+      },
     })
 
-    return res.status(200).json({ result: raw })
+    // Registro adicional com proteção (fallback)
+    if (typeof prisma.logExecucao?.create === "function") {
+      await prisma.logExecucao.create({
+        data: {
+          prompt,
+          result,
+          status: result.trim().length > 10 ? "success" : "warning",
+          userId,
+          project,
+        },
+      })
+    } else {
+      console.warn("⚠️ logExecucao model não disponível no Prisma Client.")
+    }
+
+    return res.status(200).json({ result })
   } catch (err: any) {
-    console.error("Erro IA:", err)
-    return res.status(500).json({ error: "Erro interno ao gerar com IA" })
+    console.error("❌ Erro na geração com IA:", err)
+    return res.status(500).json({ error: "Erro interno ao gerar arquivos com IA." })
   }
 }
