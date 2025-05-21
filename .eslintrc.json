@@ -1,17 +1,47 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "es2021": true,
     "node": true
   },
-  "extends": ["next", "next/core-web-vitals", "eslint:recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next",
+    "next/core-web-vitals"
+  ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "rules": {
     "semi": ["error", "never"],
-    "quotes": ["warn", "double"],
-    "no-unused-vars": "warn"
-  }
+    "quotes": ["warn", "double", { "avoidEscape": true }],
+    "no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-module-boundary-types": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "generated/",
+    "coverage/"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        // permite tipagem implícita em funções internas
+        "@typescript-eslint/explicit-function-return-type": "off"
+      }
+    }
+  ]
 }
